@@ -14,6 +14,8 @@ api = APIView(url_prefix="/api/v1")
 class Customer:
     id: int
     name: str
+
+
 class CustomerRepository:
     def __init__(self):
         self._customers = []
@@ -46,7 +48,7 @@ class CustomerRepository:
             del self._customers[target]
         return True
 
-@dataclass
+
 class CustomerGet(BaseModel):
     id: int
     name: str
@@ -55,12 +57,13 @@ class CustomerGet(BaseModel):
     def from_customer(customer: Customer) -> CustomerGet:
         return CustomerGet(id=customer.id, name=customer.name)
 
-@dataclass
+
 class CustomerPut(BaseModel):
     name: str
 
+class CustomerPost(CustomerPut):
+    pass
 
-@dataclass
 class CustomerGetList(BaseModel):
     data: List[CustomerGet]
 
@@ -73,7 +76,7 @@ class EntityQuery(BaseModel):
     order_by: Literal['ASC', 'DESC']
 
 
-@api.route("/customer")
+@api.route("/customer/{id}")
 class CustomerResource:
     @api.doc(summary="Get customer", tags=[customer_tag], responses={200: CustomerGet})
     def get(self, path: EntityPath):
@@ -96,11 +99,19 @@ class CustomerResource:
 class CustomerList:
     @api.doc(summary="Get customer list", tags=[customer_tag], responses={200: CustomerGetList})
     def get(self, query: EntityQuery):
-        objs = customer_repo.get_all(order_by=query.o)
-        A CONTINUER
+        objs = customer_repo.get_all(order_by=query.order_by)
+        return {"data": [CustomerGet.from_customer(o).model_dump(mode='json') for o in objs]}
 
     @api.doc(summary="Create customer", tags=[customer_tag], responses={200: CustomerGet})
-    def post(self, body: CustomerGet):
-        pass
+    def post(self, body: CustomerPost):
+        raw_customers = customer_repo.get_all()
+        if len(raw_customers) > 0:
+            next_id = max([o.id for o in raw_customers]) + 1
+        else:
+            next_id = 0
+        customer_repo.store({"id": next_id, "name": body.name})
+        customer = customer_repo.get_by_id(next_id)
+        return CustomerGet.from_customer(customer).model_dump(mode='json')
+
 
 customer_repo = CustomerRepository()

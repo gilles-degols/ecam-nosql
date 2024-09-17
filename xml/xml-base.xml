@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<Book>
+    <Title>XML Schema Essentials</Title>
+    <Authors>
+        <Author>R. Allen Wyke</Author>
+        <Author>Andrew Watt</Author>
+    </Authors>
+    <Publisher>John Wiley</Publisher>
+</Book>

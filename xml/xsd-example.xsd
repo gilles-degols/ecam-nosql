@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:annotation>
+        <xsd:documentation>
+            This is a sample XML Schema for Chapter 1 of XML Schema
+            Essentials.
+        </xsd:documentation>
+    </xsd:annotation>
+    <xsd:element name="Book">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Title"/>
+                <xsd:element ref="Authors"/>
+                <xsd:element ref="Publisher"/>
+            </xsd:sequence>
+            <xsd:attribute name="pubCountry" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Title" type="xsd:string"/>
+    <xsd:element name="Authors">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Author" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Author" type="xsd:string"/>
+    <xsd:element name="Publisher" type="xsd:string"/>
+</xsd:schema>
